@@ -12,7 +12,7 @@ from datetime import datetime
 def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None, model: str = "gemini-1.5-flash") -> dict:
     """
     주어진 프롬프트 메시지로 Gemini API를 호출하고 원본 응답을 반환합니다.
-    REST API 규격에 맞춰 필드명을 스네이크 케이스(snake_case)로 교정했습니다.
+    필드명을 Google REST API 표준 규격인 CamelCase로 최종 교정했습니다.
     """
     if not api_key:
         return {"error": "Gemini API 키가 누락되었습니다."}
@@ -21,20 +21,20 @@ def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None,
     clean_model_name = model if model.startswith("models/") else f"models/{model}"
     gemini_api_endpoint = f"https://generativelanguage.googleapis.com/v1/{clean_model_name}:generateContent?key={api_key}"
     
-    # [수정] REST API 호출 규격에 맞는 필드명 적용 (generation_config, response_mime_type)
+    # [수정] REST API 규격은 CamelCase를 사용해야 합니다.
     payload = {
         "contents": [{
             "parts": [{"text": prompt_message}]
         }],
-        "generation_config": {
-            "response_mime_type": "text/plain"
+        "generationConfig": {
+            "responseMimeType": "text/plain"
         }
     }
 
     # JSON 스키마가 있을 경우 설정 변경
     if response_schema:
-        payload["generation_config"]["response_mime_type"] = "application/json"
-        payload["generation_config"]["response_schema"] = response_schema
+        payload["generationConfig"]["responseMimeType"] = "application/json"
+        payload["generationConfig"]["responseSchema"] = response_schema
     
     headers = {
         "Content-Type": "application/json"
@@ -55,7 +55,6 @@ def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None,
                 if text_part:
                     if response_schema:
                         try:
-                            # 텍스트가 문자열로 오면 파싱, 이미 객체면 그대로 사용
                             if isinstance(text_part, str):
                                 parsed_content = json.loads(text_part.strip())
                                 return {"text": parsed_content, "raw_response": response_json}
@@ -78,7 +77,6 @@ def retry_ai_call(prompt: str, api_key: str, response_schema=None, max_retries: 
             return response_dict
         else:
             error_msg = response_dict.get("error", "알 수 없는 오류")
-            # 429 에러(쿼터 초과) 시 대기 시간 증가
             current_delay = delay_seconds * 2 if "429" in error_msg else delay_seconds
             
             if attempt < max_retries - 1:
@@ -125,7 +123,7 @@ def _summarize_text_batch(texts: list[str], api_key: str, batch_size: int = 3, l
             summarized_batches.append(summary)
             database_manager.save_intermediate_summary(summary, f"{current_batch_prefix}L{level}_B{len(summarized_batches)}", level)
             current_batch_texts = []
-            time.sleep(12) # 쿼터(RPM) 보호를 위해 대기 시간을 12초로 늘림
+            time.sleep(12) 
 
     if len(summarized_batches) > 1:
         return _summarize_text_batch(summarized_batches, api_key, batch_size, level + 1, current_batch_prefix)
