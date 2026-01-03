@@ -10,7 +10,7 @@ from modules import ai_service # AI 서비스 모듈
 from modules import document_processor # 새로 만든 문서 처리 모듈
 from modules import database_manager # 데이터베이스 관리 모듈 임포트
 
-from langchain.memory import StreamlitChatMessageHistory # Langchain Streamlit 통합
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 
 
 def document_analysis_page():
