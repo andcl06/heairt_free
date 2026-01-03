@@ -9,7 +9,7 @@ import streamlit as st # Streamlit의 st.error, st.warning 등을 사용하기 �
 from modules import database_manager # database_manager 모듈 임포트
 from datetime import datetime # datetime 모듈 임포트 (중간 요약 배치 ID 생성에 사용)
 
-def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None, model: str = "gemini-2.5-flash") -> dict:
+def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None, model: str = "gemini-1.5-flash") -> dict:
     """
     주어진 프롬프트 메시지로 Gemini API를 호출하고 원본 응답을 반환합니다.
     response_schema: JSON 응답을 위한 스키마 (선택 사항)
