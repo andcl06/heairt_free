@@ -12,7 +12,7 @@ from datetime import datetime
 def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None, model: str = "gemini-1.5-flash") -> dict:
     """
     주어진 프롬프트 메시지로 Gemini API를 호출하고 원본 응답을 반환합니다.
-    필드명을 Google REST API 표준 규격인 CamelCase로 최종 교정했습니다.
+    REST API 규격에 맞춰 모든 필드명을 스네이크 케이스(snake_case)로 적용했습니다.
     """
     if not api_key:
         return {"error": "Gemini API 키가 누락되었습니다."}
@@ -21,20 +21,20 @@ def call_gemini_api_raw(prompt_message: str, api_key: str, response_schema=None,
     clean_model_name = model if model.startswith("models/") else f"models/{model}"
     gemini_api_endpoint = f"https://generativelanguage.googleapis.com/v1/{clean_model_name}:generateContent?key={api_key}"
     
-    # [수정] REST API 규격은 CamelCase를 사용해야 합니다.
+    # [수정] REST API(HTTP) 호출 시 generation_config 내부 필드는 snake_case를 사용해야 합니다.
     payload = {
         "contents": [{
             "parts": [{"text": prompt_message}]
         }],
-        "generationConfig": {
-            "responseMimeType": "text/plain"
+        "generation_config": {
+            "response_mime_type": "text/plain"
         }
     }
 
     # JSON 스키마가 있을 경우 설정 변경
     if response_schema:
-        payload["generationConfig"]["responseMimeType"] = "application/json"
-        payload["generationConfig"]["responseSchema"] = response_schema
+        payload["generation_config"]["response_mime_type"] = "application/json"
+        payload["generation_config"]["response_schema"] = response_schema
     
     headers = {
         "Content-Type": "application/json"
