@@ -1,3 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 requests
 beautifulsoup4
 python-dotenv
@@ -16,7 +18,4 @@ loguru
 konlpy
 langdetect
 nltk
-# CPU 전용 버전으로 설치하여 용량과 시간을 80% 단축
---extra-index-url https://download.pytorch.org/whl/cpu
-torch
 sentence-transformers
