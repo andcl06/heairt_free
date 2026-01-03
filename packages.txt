@@ -1,1 +1,5 @@
 openjdk-17-jdk-headless
+build-essential
+cmake
+rustc
+cargo
