@@ -9,8 +9,7 @@ from langchain_community.document_loaders import (
 )
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-
+from langchain_community.vectorstores import FAISS
 
 def tiktoken_len(text):
     """텍스트의 토큰 길이를 계산합니다."""
